@@ -1,0 +1,26 @@
+body{
+    background-color: #F6F7EB;
+    padding: 1rem;
+}
+
+//general table
+
+.table{
+    display: table;
+    width: 960px;
+
+    .table-body{
+        display: table-row-group;
+    }
+    .table-row {
+        display: table-row;
+    }
+    .table-cell{
+        display: table-cell;
+        width: 120px;
+    }
+    .invisible{
+        border: 0 !important;
+        background-color: transparent !important;
+    }
+}
