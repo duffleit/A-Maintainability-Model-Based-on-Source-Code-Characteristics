@@ -18,9 +18,55 @@ body{
     .table-cell{
         display: table-cell;
         width: 120px;
-    }
-    .invisible{
-        border: 0 !important;
-        background-color: transparent !important;
+        padding: 0.5rem;
     }
 }
+
+//rating
+.table-cell.rating{
+    color: white;
+    font-weight: bold;
+}
+
+//characteristics
+
+.table-row.characteristics-row{
+    .table-cell:first-child{
+        visibility: hidden;
+    }
+
+    .table-cell{
+        background-color: #393E41;
+        color: white;
+    }
+}
+
+.table-row.characteristics-results{
+    .table-cell{
+        border-width: 5px 0;
+        border-color: black;
+        border-style: solid;
+
+        color: white;
+    }
+}
+
+//partition
+
+.table-row.partition-row{
+    :first-child{
+        background-color: #67597A;
+        color: white;
+    }
+
+    .table-cell{
+        border-top: 3px solid black;
+    }
+}
+
+
+
+
+
+
+

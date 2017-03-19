@@ -1,0 +1,39 @@
+body {
+  background-color: #F6F7EB;
+  padding: 1rem; }
+
+.table {
+  display: table;
+  width: 960px; }
+  .table .table-body {
+    display: table-row-group; }
+  .table .table-row {
+    display: table-row; }
+  .table .table-cell {
+    display: table-cell;
+    width: 120px;
+    padding: 0.5rem; }
+
+.table-cell.rating {
+  color: white;
+  font-weight: bold; }
+
+.table-row.characteristics-row .table-cell:first-child {
+  visibility: hidden; }
+.table-row.characteristics-row .table-cell {
+  background-color: #393E41;
+  color: white; }
+
+.table-row.characteristics-results .table-cell {
+  border-width: 5px 0;
+  border-color: black;
+  border-style: solid;
+  color: white; }
+
+.table-row.partition-row :first-child {
+  background-color: #67597A;
+  color: white; }
+.table-row.partition-row .table-cell {
+  border-top: 3px solid black; }
+
+/*# sourceMappingURL=custom.css.map */
