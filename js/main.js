@@ -1,35 +1,4 @@
-sensorPortFactory = function() {
-
-    var characteristics = ["complexity", "coupling", "cohesion", "structure", "size", "coverage", "duplication"];
-    var partitions = ["unit", "module", "component", "codebase"];
-
-    var getCell = function(characteristic, partition) {
-        var rowSkips = characteristics.length * partitions.indexOf(partition);
-        var colSkips = characteristics.indexOf(characteristic);
-        var skips = rowSkips + colSkips;
-
-        return $('.sensor-port-rating').eq(skips);
-    };
-
-    var setAverage = function(cell, metrics){
-        var average =
-            Math.round((metrics.reduce(function(sum, port){return sum + port.rating}, 0) / metrics.length) * 1000) / 1000;
-
-        cell.html(average);
-        cell.css("backgroundColor", getRgb(average));
-    };
-
-    var setPorts = function(cell, metrics){
-
-        var metricSummary = "";
-        for(var i = 0; i < metrics.length; i++){
-            var metric = metrics[i];
-            console.log(metric);
-            metricSummary += metric.name + ": " + metric.rating + "<br>";
-        }
-        cell.attr("data-tip", metricSummary);
-        cell.tipr();
-    };
+var rgbCalculator = function(){
 
     var getRgb = function(average){
         var i = 1 - parseFloat(average);
@@ -66,6 +35,51 @@ sensorPortFactory = function() {
     };
 
     return {
+        calculateRgb: getRgb
+    }
+}();
+
+sensorPortFactory = function() {
+
+    var characteristics = ["cohesion", "coupling", "complexity", "size", "duplication", "coverage"];
+    var partitions = ["unit", "module", "component", "codebase"];
+
+    var getCell = function(characteristic, partition) {
+        var rowSkips = characteristics.length * partitions.indexOf(partition);
+        var colSkips = characteristics.indexOf(characteristic);
+        var skips = rowSkips + colSkips;
+
+        return $('.sensor-port-rating').eq(skips);
+    };
+
+    var setAverage = function(cell, metrics){
+        var average =
+            Math.round((metrics.reduce(function(sum, port){return sum + port.rating}, 0) / metrics.length) * 1000) / 1000;
+
+        cell.html(average);
+        cell.css("backgroundColor", rgbCalculator.calculateRgb(average));
+    };
+
+    var setPorts = function(cell, metrics){
+
+        var metricSummary = "";
+        for(var i = 0; i < metrics.length; i++){
+            var metric = metrics[i];
+
+            metricSummary += "<div class='metricSummary'>";
+            metricSummary += "<div class='name'>" + metric.name + ": " + metric.rating + "</div>";
+
+            if(metric.description) metricSummary += "<div class='description'>" + metric.description + "</div>";
+            if(metric.image) metricSummary += "<div class='image'><img src='metricData/" + metric.image+ "'></div>";
+            if(metric.link) metricSummary += "<div class='link'><i class='fa fa-link'></i>&nbsp;<a target='_blank' href='metricData/" + metric.image + "'>more</a></div>";
+
+            metricSummary += "</div>";
+        }
+        cell.attr("data-tip", metricSummary);
+        cell.tipr();
+    };
+
+    return {
         setPort: function(port){
             var cell = getCell(port[0], port[1]);
 
@@ -75,26 +89,121 @@ sensorPortFactory = function() {
     }
 }();
 
+var matrixFactory = function(){
+
+    var characteristicsLength = 7;
+    var portionLength = 4;
+
+    var qualityCharacteristicsMapping = [[1, 4], [0, 1, 5], [0, 1, 3, 4, 5], [2, 4, 5], [1, 2, 3, 5]];
+
+    var sumPorts = function(){
+
+        var characteristicValues = [];
+
+        for(var i = 0; i < characteristicsLength; i++){
+
+            var sum = 0;
+            var usedPorts = 0;
+
+            for(var f = 0; f < portionLength; f++){
+                var port = $('.partition-row')[f];
+                var partitionPort = $(port).find('.sensor-port-rating')[i];
+
+                var portValue = parseFloat($(partitionPort).html());
+                if(isNaN(portValue)) continue;
+
+                sum += portValue;
+                usedPorts++;
+            }
+
+            var average = sum/usedPorts;
+            average = Math.round(average* 1000) / 1000;
+
+            characteristicValues[i] = average;
+
+            var resultCell = $('.characteristics-results').children()[i+1];
+            $(resultCell).html((average).toFixed(2));
+            $(resultCell).css("backgroundColor", rgbCalculator.calculateRgb(average));
+        }
+
+        return characteristicValues;
+    };
+
+    var calculateQualityResults = function(characteristicResults){
+        for(var i = 0; i < qualityCharacteristicsMapping.length; i++){
+
+            var mapping = qualityCharacteristicsMapping[i];
+
+            var sum = 0;
+            var characteristicsCount = 0;
+            for(; characteristicsCount < mapping.length; characteristicsCount++){
+                sum += characteristicResults[mapping[characteristicsCount]];
+                var mappingCellCount = (1+mapping[characteristicsCount]);
+
+                var mappingCell = $('.quality-characteristics:nth('+i+') .table-cell:nth('+mappingCellCount+')');
+                $(mappingCell).html("X");
+                $(mappingCell).css("backgroundColor", "#D2D7DF");
+                $(mappingCell).css("textAlign", "center");
+                $(mappingCell).css("fontWeight", "bold");
+
+            }
+
+            var result = sum/characteristicsCount;
+            result = Math.round(result* 1000) / 1000;
+
+            var resultCell = $('.quality-characteristics:nth('+i+') .result');
+
+            $(resultCell).html(getRating(result));
+            $(resultCell).css("backgroundColor", rgbCalculator.calculateRgb(result));
+
+            $(resultCell).attr("data-tip", "Rating: " + result);
+            $(resultCell).tipr();
+        }
+    };
+
+    var getRating = function(number){
+        if(number < 0.2) return "++";
+        if(number < 0.4) return "+";
+        if(number < 0.6) return "0";
+        if(number < 0.8) return "-";
+        return "--";
+    };
+
+    return {
+        calculateMatrix: function(){
+            var characteristicResults = sumPorts();
+            calculateQualityResults(characteristicResults);
+        }
+    }
+
+}();
+
 $('document').ready(function(){
 
+    $(".partition-row").hide();
+
+    var cc = 0.1, cbo = 0.3, dms = 0.7, rc = 0.44, lcom = 0.3, dit = 0.18, noc = 0.18, us = 0.3, cbb = 0.37, cbs = 0.018, atc = 0.45, cpd = 0.12;
+
     var sensorPorts = [
-        ["complexity", "module", [{name: "Cyclomatic Complexity (CC)", rating: 0.1}]],
-        ["coupling", "module", [{name: "Coupling Between Object Classes (CBO)", rating: 0.2}]],
-        ["coupling", "component", [{name: "Distance from Main Sequence (DMS)", rating: 0.3}]],
-        ["cohesion", "module", [{name: "Relational Cohesion (RC)", rating: 0.5}]],
-        ["cohesion", "component", [{name: "Lack of Cohesion of Methods (LCOM)", rating: 0.2}]],
-        ["structure", "module", [{name: "Depth of Inheritance Tree (DIT)", rating: 0.2}, {name: "Number of Children (NOC)", rating: 0.7}]],
-        ["structure", "component", [{name: "Codebase Balance (CBB)", rating: 0.6}]],
-        ["size", "unit", [{name: "Unit Size (US)", rating: 0.1}]],
-        ["size", "codebase", [{name: "Codebase Size (CBS)", rating: 0.2}]],
-        ["coverage", "codebase", [{name: "Automated Test Coverage (ATC)", rating: 0.4}]],
-        ["duplication", "codebase", [{name: "Copy Paste Detection (CPD)", rating: 0.2}]]
+        ["complexity", "module", [{name: "Cyclomatic Complexity (CC)", rating: cc},{name: "Depth of Inheritance Tree (DIT)", rating: dit},{name: "Number of Children (NOC)", rating: noc}]],
+        ["coupling", "module", [{name: "Coupling Between Object Classes (CBO)", rating: cbo}]],
+        ["coupling", "component", [{name: "Distance from Main Sequence (DMS)", image: "dms.png", link: "dms.png", description: "Distance from Main Sequence visualized by NDepend. Graph shows all Assemblies according to their Abstractness and Instability.", rating: dms}]],
+        ["cohesion", "module", [{name: "Relational Cohesion (RC)", rating: rc}]],
+        ["cohesion", "component", [{name: "Lack of Cohesion of Methods (LCOM)", rating: lcom}]],
+        ["size", "module", [{name: "Codebase Balance (CBB)", rating: cbb}]],
+        ["size", "unit", [{name: "Unit Size (US)", rating: us}]],
+        ["size", "codebase", [{name: "Codebase Size (CBS)", rating: cbs}]],
+        ["coverage", "codebase", [{name: "Automated Test Coverage (ATC)", rating: atc}]],
+        ["duplication", "codebase", [{name: "Copy Paste Detection (CPD)", rating: cpd}]]
     ];
 
     for(var i = 0; i < sensorPorts.length; i++){
         var sensorPort = sensorPorts[i];
         sensorPortFactory.setPort(sensorPort);
     }
+
+    matrixFactory.calculateMatrix();
+    $("#show-partitions-btn").click(function() { $(".partition-row").toggle();});
 });
 
 

@@ -1,72 +1,173 @@
-body{
+body {
     background-color: #F6F7EB;
     padding: 1rem;
 }
 
 //general table
 
-.table{
+.table {
     display: table;
-    width: 960px;
 
-    .table-body{
+    .table-body {
         display: table-row-group;
     }
     .table-row {
         display: table-row;
     }
-    .table-cell{
+    .table-cell {
         display: table-cell;
-        width: 120px;
-        padding: 0.5rem;
+        width: 100px;
+        padding: 10px;
+
+        border-right: 2px solid black;
+        text-align: right;
     }
 }
 
 //rating
-.table-cell.rating{
+.table-cell.rating {
     color: white;
     font-weight: bold;
 }
 
 //characteristics
 
-.table-row.characteristics-row{
-    .table-cell:first-child{
-        visibility: hidden;
+.table-row.characteristics-row {
+    .table-cell:first-child {
+        background-color: transparent;
     }
 
-    .table-cell{
-        background-color: #393E41;
+    .table-cell {
+        background-color: #011936;
         color: white;
     }
 }
 
-.table-row.characteristics-results{
-    .table-cell{
-        border-width: 5px 0;
-        border-color: black;
-        border-style: solid;
-
+.table-row.characteristics-results {
+    .table-cell {
+        border-bottom: 5px solid black;
         color: white;
     }
 }
 
 //partition
 
-.table-row.partition-row{
-    :first-child{
+.table-row.partition-row {
+    > div:first-child {
         background-color: #67597A;
         color: white;
     }
 
-    .table-cell{
-        border-top: 3px solid black;
+    .table-cell {
+        border-top: 2px solid black;
     }
 }
 
+.table-row.partition-row.last {
+    .table-cell {
+        border-top: 2px solid black;
+        border-bottom: 5px solid black;
+    }
+}
 
+.tipr_content {
+    padding: 0 !important;
+    border-radius: 5px !important;
+    border: 2px solid black !important;
+}
 
+.metricSummary {
+    width: 300px;
 
+    .name {
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+        background-color: lightgray;
+        border-bottom: 1px solid black;
+
+        :last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    .image img {
+        width: 100%;
+    }
+
+    .description {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .link{
+        padding: 10px;
+        border-top: 1px dashed black;
+        font-weight: bold;
+
+        :hover, :visited {
+            color: black;
+            text-decoration: underline;
+        }
+    }
+}
+
+//characteristics results
+
+.table-row.characteristics-results {
+    font-weight: bold;
+
+    .table-cell {
+        color: black;
+    }
+
+    :first-child {
+
+    }
+}
+
+//quality characteristics
+
+.quality-characteristics {
+    > div:first-child {
+        background-color: #465C69;
+        color: white;
+        padding: 0;
+
+        .label, .result {
+            width: 95px;
+            display: inline-block;
+            padding: 10px;
+            text-align: right;
+        }
+        .result {
+            width: 45px;
+            font-weight: bold;
+            color: black;
+            text-align: center;
+            font-size: large;
+
+            border-width: 0 3px 0 3px;
+            border-color: black;
+            border-style: solid;
+        }
+    }
+    .table-cell {
+        border-bottom: 2px solid black;
+    }
+}
+
+#show-partitions-btn {
+    color: grey;
+    text-decoration: none;
+    font-style: italic;
+    font-weight: normal;
+    font-size: small;
+
+    :hover, :visited {
+        color: grey;
+    }
+}
 
 
 
