@@ -70,10 +70,16 @@ body {
     }
 }
 
+.tipr_point_below:before, .tipr_point_below:after{ content: none !important; }
+
 .tipr_content {
+
+
+
     padding: 0 !important;
     border-radius: 5px !important;
     border: 2px solid black !important;
+    margin-top: -10px;
 }
 
 .metricSummary {

@@ -1,5 +1,5 @@
 body {
-  background-color: white;
+  background-color: #F6F7EB;
   padding: 1rem; }
 
 .table {
@@ -39,10 +39,14 @@ body {
   border-top: 2px solid black;
   border-bottom: 5px solid black; }
 
+.tipr_point_below:before, .tipr_point_below:after {
+  content: none !important; }
+
 .tipr_content {
   padding: 0 !important;
   border-radius: 5px !important;
-  border: 2px solid black !important; }
+  border: 2px solid black !important;
+  margin-top: -10px; }
 
 .metricSummary {
   width: 300px; }
